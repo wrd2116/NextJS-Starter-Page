@@ -28,5 +28,10 @@ export async function updateSession(request: NextRequest) {
 
   await supabase.auth.getUser()
 
+  // Prevent edge/CDN from caching auth-dependent pages
+  if (request.nextUrl.pathname === '/' || request.nextUrl.pathname.startsWith('/auth/')) {
+    response.headers.set('Cache-Control', 'private, no-store, max-age=0')
+  }
+
   return response
 }
