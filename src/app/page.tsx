@@ -1,6 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import { GatedUI } from './gated-ui'
 
+export const dynamic = 'force-dynamic'
+
 const TABLE_NAME = process.env.NEXT_PUBLIC_SUPABASE_TABLE ?? 'bug_reports'
 
 export default async function Home() {
