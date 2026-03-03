@@ -71,7 +71,7 @@ export function UploadCaption() {
       setStep('Generating captions…')
       const result = await generateCaptions(token, imageId)
 
-      setCaptions(Array.isArray(result) ? result : [result])
+      setCaptions((Array.isArray(result) ? result : [result]) as CaptionRecord[])
       setStatus('done')
       setStep('')
     } catch (err) {
