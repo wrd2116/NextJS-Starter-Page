@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { GatedUI } from './gated-ui'
 import { CaptionList } from './caption-list'
 import { Next50 } from './next50'
+import { UploadCaption } from './upload-caption'
 
 export const dynamic = 'force-dynamic'
 
@@ -72,6 +73,8 @@ export default async function Home() {
   return (
     <main className="min-h-screen p-8 md:p-16 bg-gray-50">
       <div className="max-w-5xl mx-auto space-y-10">
+        <UploadCaption />
+
         <section>
           <h2 className="text-xl font-semibold text-gray-900 mb-3">Rate captions</h2>
           {captionList.length > 0 ? (
