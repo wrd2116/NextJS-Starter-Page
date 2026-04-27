@@ -15,7 +15,10 @@ export async function submitVote(captionId: string, vote: 1 | -1) {
       user_id: user.id,
       profile_id: user.id,
       vote_value: vote,
+      created_by_user_id: user.id,
+      modified_by_user_id: user.id,
       created_datetime_utc: new Date().toISOString().replace('T', ' ').replace('Z', '+00'),
+      modified_datetime_utc: new Date().toISOString().replace('T', ' ').replace('Z', '+00'),
     })
 
   if (!error) revalidatePath('/')
