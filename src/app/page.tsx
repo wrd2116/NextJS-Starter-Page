@@ -57,6 +57,17 @@ export default async function Home() {
   const { data: captions } = await captionQuery
 
   const captionList = captions ?? []
+  const captionIds = captionList.map((c: Record<string, unknown>) => String(c.id))
+  const { data: voteRows } = captionIds.length
+    ? await supabase.from('caption_votes').select('caption_id,vote_value').in('caption_id', captionIds)
+    : { data: [] }
+  const voteTotalByCaptionId: Record<string, number> = {}
+  for (const row of voteRows ?? []) {
+    const r = row as { caption_id: string; vote_value: number | null }
+    const id = String(r.caption_id)
+    voteTotalByCaptionId[id] = (voteTotalByCaptionId[id] ?? 0) + (r.vote_value ?? 0)
+  }
+
   const imageIds = Array.from(new Set(captionList.map((c: Record<string, unknown>) => c.image_id ?? c.image).filter(Boolean))) as string[]
   const { data: imageRows } = imageIds.length > 0
     ? await supabase.from('images').select('id, url').in('id', imageIds)
@@ -71,12 +82,20 @@ export default async function Home() {
   const columns = rows?.length ? Object.keys(rows[0] as object) : []
 
   return (
-    <main className="min-h-screen p-8 md:p-16 bg-gray-50">
+    <main className="min-h-screen bg-gray-50 p-6 md:p-12 dark:bg-gray-950">
       <div className="max-w-5xl mx-auto space-y-10">
+        <section className="rounded-xl border border-blue-200 bg-blue-50 px-5 py-4 text-blue-900 dark:border-blue-900/60 dark:bg-blue-950/40 dark:text-blue-100">
+          <h1 className="text-xl font-bold">Caption Feed</h1>
+          <p className="mt-1 text-sm">
+            Upload an image to generate captions, then vote captions up or down. Votes help rank what shows up next.
+          </p>
+        </section>
+
         <UploadCaption />
 
         <section>
-          <h2 className="text-xl font-semibold text-gray-900 mb-3">Rate captions</h2>
+          <h2 className="mb-1 text-xl font-semibold text-gray-900 dark:text-gray-100">Rate captions</h2>
+          <p className="mb-3 text-sm text-gray-600 dark:text-gray-400">Tap or click the large vote buttons on each card.</p>
           {captionList.length > 0 ? (
             <>
               <CaptionList
@@ -84,20 +103,21 @@ export default async function Home() {
                   id: String(c.id),
                   text: captionText(c),
                   imgUrl: captionImageUrl(c, imageUrlById),
+                  votes: voteTotalByCaptionId[String(c.id)] ?? 0,
                 }))}
               />
               <Next50 />
             </>
           ) : (
             <>
-              <p className="text-gray-500 mb-2">No captions to rate right now. Check back later or load more.</p>
+              <p className="mb-2 text-gray-500 dark:text-gray-400">No captions to rate right now. Check back later or load more.</p>
               <Next50 />
             </>
           )}
         </section>
 
         <section>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2 capitalize">
+          <h1 className="mb-2 text-2xl font-bold capitalize text-gray-900 dark:text-gray-100">
             {TABLE_NAME.replace(/_/g, ' ')}
           </h1>
           {error ? (
@@ -105,17 +125,17 @@ export default async function Home() {
               Could not load table &quot;{TABLE_NAME}&quot;: {error.message}
             </p>
           ) : !rows?.length ? (
-            <p className="text-gray-500">No rows in this table yet.</p>
+            <p className="text-gray-500 dark:text-gray-400">No rows in this table yet.</p>
           ) : (
             <>
-              <p className="text-gray-500 text-sm mb-8">
+              <p className="mb-8 text-sm text-gray-500 dark:text-gray-400">
                 {rows.length} row{rows.length !== 1 ? 's' : ''} from Supabase
               </p>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {rows.map((row, index) => (
             <article
               key={String((row as Record<string, unknown>).id ?? index)}
-              className="bg-white rounded-lg border border-gray-200 shadow-sm p-5 hover:shadow-md transition-shadow"
+              className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md dark:border-gray-800 dark:bg-gray-900"
             >
               {columns.map((key) => {
                 const value = (row as Record<string, unknown>)[key]
@@ -127,10 +147,10 @@ export default async function Home() {
                       : String(value)
                 return (
                   <dl key={key} className="mb-3 last:mb-0">
-                    <dt className="text-xs font-medium text-gray-400 uppercase tracking-wide">
+                    <dt className="text-xs font-medium uppercase tracking-wide text-gray-400 dark:text-gray-500">
                       {key}
                     </dt>
-                    <dd className="text-gray-900 font-medium break-words">
+                    <dd className="break-words font-medium text-gray-900 dark:text-gray-100">
                       {display}
                     </dd>
                   </dl>

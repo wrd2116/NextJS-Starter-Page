@@ -118,12 +118,15 @@ export function UploadCaption() {
   }
 
   return (
-    <section className="bg-white rounded-lg border border-gray-200 p-6">
-      <h2 className="text-xl font-semibold text-gray-900 mb-4">Upload image & get captions</h2>
+    <section className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
+      <h2 className="mb-2 text-xl font-semibold text-gray-900 dark:text-gray-100">Upload image & get captions</h2>
+      <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">
+        Your selected image stays visible below while captions are generating.
+      </p>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="upload-image" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="upload-image" className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
             Choose image (JPEG, PNG, WebP, GIF, HEIC)
           </label>
           <input
@@ -131,7 +134,7 @@ export function UploadCaption() {
             type="file"
             accept="image/jpeg,image/jpg,image/png,image/webp,image/gif,image/heic"
             onChange={handleFileChange}
-            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-medium file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200"
+            className="block w-full text-sm text-gray-500 file:mr-4 file:rounded file:border-0 file:bg-gray-900 file:px-5 file:py-3 file:text-sm file:font-semibold file:text-white hover:file:bg-gray-700 dark:text-gray-400 dark:file:bg-gray-100 dark:file:text-gray-900"
           />
         </div>
 
@@ -140,7 +143,7 @@ export function UploadCaption() {
             <img
               src={previewUrl}
               alt="Preview"
-              className="max-h-48 rounded border border-gray-200 object-contain"
+              className="max-h-48 rounded border border-gray-200 object-contain dark:border-gray-700"
             />
           </div>
         )}
@@ -148,8 +151,11 @@ export function UploadCaption() {
         <button
           type="submit"
           disabled={!file || status === 'uploading'}
-          className="px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="inline-flex items-center justify-center gap-2 rounded bg-gray-900 px-5 py-3 text-sm font-semibold text-white hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-200"
         >
+          {status === 'uploading' ? (
+            <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent dark:border-gray-900 dark:border-t-transparent" />
+          ) : null}
           {status === 'uploading' ? step || 'Uploading…' : 'Upload & generate captions'}
         </button>
       </form>
@@ -161,11 +167,11 @@ export function UploadCaption() {
       )}
 
       {status === 'done' && captions.length > 0 && (
-        <div className="mt-6 pt-6 border-t border-gray-200">
-          <h3 className="text-sm font-semibold text-gray-900 mb-2">Generated captions</h3>
+        <div className="mt-6 border-t border-gray-200 pt-6 dark:border-gray-700">
+          <h3 className="mb-2 text-sm font-semibold text-gray-900 dark:text-gray-100">Generated captions</h3>
           <ul className="space-y-2">
             {captions.map((c, i) => (
-              <li key={c.id ?? i} className="text-gray-800 text-sm">
+              <li key={c.id ?? i} className="text-sm text-gray-800 dark:text-gray-200">
                 {textOf(c)}
               </li>
             ))}
