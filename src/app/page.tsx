@@ -47,7 +47,7 @@ export default async function Home() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return <GatedUI />
 
-  const { data: votedRows } = await supabase.from('caption_votes').select('caption_id').eq('user_id', user.id)
+  const { data: votedRows } = await supabase.from('caption_votes').select('caption_id').eq('profile_id', user.id)
   const votedIds = votedRows?.map((r: { caption_id: string }) => r.caption_id) ?? []
 
   let captionQuery = supabase.from(CAPTIONS_TABLE).select('*').limit(CAPTIONS_BATCH)

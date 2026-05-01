@@ -12,7 +12,6 @@ export async function submitVote(captionId: string, vote: 1 | -1) {
     .from('caption_votes')
     .insert({
       caption_id: captionId,
-      user_id: user.id,
       profile_id: user.id,
       vote_value: vote,
       created_by_user_id: user.id,
